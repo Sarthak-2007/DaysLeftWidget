@@ -27,4 +27,5 @@
                 android:resource="@xml/days_left_widget_info" />
         </receiver>
     </application>
+
 </manifest>
