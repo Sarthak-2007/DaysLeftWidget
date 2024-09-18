@@ -25,8 +25,12 @@ jobs:
       run: chmod +x gradlew
     - name: Build with Gradle
       run: ./gradlew build
+    - name: List build directory contents
+      run: |
+        echo "Contents of app/build/outputs:"
+        ls -R app/build/outputs
     - name: Upload APK
       uses: actions/upload-artifact@v3
       with:
         name: app-debug
-        path: app/build/outputs/apk/debug/app-debug.apk
+        path: app/build/outputs/apk/debug/*.apk
