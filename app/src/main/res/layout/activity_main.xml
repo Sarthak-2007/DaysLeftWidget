@@ -1,18 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout 
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Days Left Widget"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        android:text="Select Target Date"
+        android:textSize="18sp"
+        android:layout_marginBottom="16dp"/>
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <DatePicker
+        android:id="@+id/datePicker"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:datePickerMode="spinner"
+        android:calendarViewShown="false"/>
+
+    <Button
+        android:id="@+id/setDateButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set Target Date"
+        android:layout_marginTop="16dp"/>
+
+</LinearLayout>
