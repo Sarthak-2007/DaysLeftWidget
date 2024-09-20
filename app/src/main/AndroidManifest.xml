@@ -9,16 +9,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity
-            android:name=".MainActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <receiver android:name=".DaysLeftWidget"
-            android:exported="true">
+
+        <receiver android:name=".DaysLeftWidget" android:exported="true">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -26,6 +18,13 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/days_left_widget_info" />
         </receiver>
+
+        <activity android:name=".WidgetConfigActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE"/>
+            </intent-filter>
+        </activity>
+
     </application>
 
 </manifest>
