@@ -1,0 +1,10 @@
+<appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
+    android:initialKeyguardLayout="@layout/widget_days_left"
+    android:initialLayout="@layout/widget_days_left"
+    android:minWidth="40dp"
+    android:minHeight="40dp"
+    android:previewImage="@drawable/example_appwidget_preview"
+    android:resizeMode="horizontal|vertical"
+    android:updatePeriodMillis="86400000"
+    android:widgetCategory="home_screen"
+    android:configure="com.example.daysleftwidget.WidgetConfigActivity"/>
