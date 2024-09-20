@@ -5,50 +5,57 @@ import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
-import android.widget.DatePicker
 import android.widget.EditText
-import java.util.*
+import androidx.appcompat.app.AppCompatActivity
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 
-class WidgetConfigActivity : Activity() {
-    private var widgetId = AppWidgetManager.INVALID_APPWIDGET_ID
+class WidgetConfigActivity : AppCompatActivity() {
+    private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_widget_config)
 
-        widgetId = intent?.extras?.getInt(
+        // Set the result to CANCELED. This will cause the widget host to cancel
+        // out of the widget placement if they press the back button.
+        setResult(Activity.RESULT_CANCELED)
+
+        // Find the widget id from the intent.
+        appWidgetId = intent?.extras?.getInt(
             AppWidgetManager.EXTRA_APPWIDGET_ID,
             AppWidgetManager.INVALID_APPWIDGET_ID
         ) ?: AppWidgetManager.INVALID_APPWIDGET_ID
 
-        val datePicker = findViewById<DatePicker>(R.id.datePicker)
-        val customTextInput = findViewById<EditText>(R.id.customTextInput)
-        val saveButton = findViewById<Button>(R.id.saveButton)
-
-        saveButton.setOnClickListener {
-            val day = datePicker.dayOfMonth
-            val month = datePicker.month
-            val year = datePicker.year
-            val customText = customTextInput.text.toString()
-
-            val targetDate = Calendar.getInstance().apply {
-                set(year, month, day)
-            }
-
-            getSharedPreferences("WidgetPrefs", MODE_PRIVATE).edit().apply {
-                putLong("TargetDate_$widgetId", targetDate.timeInMillis)
-                putString("CustomText_$widgetId", customText)
-                apply()
-            }
-
-            val appWidgetManager = AppWidgetManager.getInstance(this)
-            DaysLeftWidget.updateAppWidget(this, appWidgetManager, widgetId)
-
-            val resultValue = Intent().apply {
-                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgetId)
-            }
-            setResult(RESULT_OK, resultValue)
+        if (appWidgetId == AppWidgetManager.INVALID_APPWIDGET_ID) {
             finish()
+            return
         }
+
+        val labelEditText = findViewById<EditText>(R.id.labelEditText)
+        val confirmButton = findViewById<Button>(R.id.confirmButton)
+
+        confirmButton.setOnClickListener {
+            val label = labelEditText.text.toString()
+            val dates = loadDates()
+            if (dates.isNotEmpty()) {
+                val dateItem = dates.last() // Use the last added date
+                updateWidget(dateItem, label)
+                setResult(Activity.RESULT_OK, Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId))
+                finish()
+            }
+        }
+    }
+
+    private fun updateWidget(dateItem: DateItem, label: String) {
+        val appWidgetManager = AppWidgetManager.getInstance(this)
+        val dates = loadDates()
+        DaysLeftWidget.updateAppWidget(this, appWidgetManager, appWidgetId, dates)
+    }
+
+    private fun loadDates(): List<DateItem> {
+        val prefs = getSharedPreferences("DatePrefs", MODE_PRIVATE)
+        val json = prefs.getString("dates", "[]")
+        return Gson().fromJson(json, object : TypeToken<List<DateItem>>() {}.type)
     }
 }
