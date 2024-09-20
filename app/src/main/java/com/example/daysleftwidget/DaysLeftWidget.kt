@@ -11,18 +11,18 @@ import kotlin.math.abs
 
 class DaysLeftWidget : AppWidgetProvider() {
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
-        val dates = loadDates(context)
         for (appWidgetId in appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId, dates)
+            updateAppWidget(context, appWidgetManager, appWidgetId)
         }
     }
 
     companion object {
-        fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int, dates: List<DateItem>) {
+        fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
             val views = RemoteViews(context.packageName, R.layout.widget_days_left)
             
+            val dates = loadDates(context)
             if (dates.isNotEmpty()) {
-                val dateItem = dates[appWidgetId % dates.size]
+                val dateItem = dates.last() // Use the last added date
                 val daysLeft = getDaysLeft(dateItem.date)
                 views.setTextViewText(R.id.daysLeftText, "$daysLeft days left")
                 views.setTextViewText(R.id.labelText, dateItem.label)
