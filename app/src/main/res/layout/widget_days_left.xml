@@ -4,29 +4,27 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="8dp"
-    android:background="#000000">
+    android:background="@drawable/widget_background">
 
     <TextView
         android:id="@+id/daysLeftText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        android:textColor="#FFFFFF"
-        android:text="XX days left"/>
+        android:textColor="#FFFFFF" />
 
     <View
         android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="#FFFFFF"
         android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"/>
+        android:layout_marginBottom="4dp" />
 
     <TextView
-        android:id="@+id/customText"
+        android:id="@+id/labelText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textSize="14sp"
-        android:textColor="#FFFFFF"
-        android:text="Custom text"/>
+        android:textColor="#CCCCCC" />
 
 </LinearLayout>
