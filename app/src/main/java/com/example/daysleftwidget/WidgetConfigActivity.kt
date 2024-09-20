@@ -7,8 +7,6 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
 
 class WidgetConfigActivity : AppCompatActivity() {
     private var appWidgetId = AppWidgetManager.INVALID_APPWIDGET_ID
@@ -37,25 +35,17 @@ class WidgetConfigActivity : AppCompatActivity() {
 
         confirmButton.setOnClickListener {
             val label = labelEditText.text.toString()
-            val dates = loadDates()
-            if (dates.isNotEmpty()) {
-                val dateItem = dates.last() // Use the last added date
-                updateWidget(dateItem, label)
-                setResult(Activity.RESULT_OK, Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId))
-                finish()
+            
+            // Update widget
+            val appWidgetManager = AppWidgetManager.getInstance(this)
+            DaysLeftWidget.updateAppWidget(this, appWidgetManager, appWidgetId)
+
+            // Set result and finish activity
+            val resultValue = Intent().apply {
+                putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
             }
+            setResult(Activity.RESULT_OK, resultValue)
+            finish()
         }
-    }
-
-    private fun updateWidget(dateItem: DateItem, label: String) {
-        val appWidgetManager = AppWidgetManager.getInstance(this)
-        val dates = loadDates()
-        DaysLeftWidget.updateAppWidget(this, appWidgetManager, appWidgetId, dates)
-    }
-
-    private fun loadDates(): List<DateItem> {
-        val prefs = getSharedPreferences("DatePrefs", MODE_PRIVATE)
-        val json = prefs.getString("dates", "[]")
-        return Gson().fromJson(json, object : TypeToken<List<DateItem>>() {}.type)
     }
 }
