@@ -5,23 +5,16 @@
     android:orientation="vertical"
     android:padding="16dp">
 
-    <DatePicker
-        android:id="@+id/datePicker"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:datePickerMode="spinner"
-        android:calendarViewShown="false"/>
-
     <EditText
-        android:id="@+id/customTextInput"
+        android:id="@+id/labelEditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="Enter custom text"/>
+        android:hint="Enter widget label" />
 
     <Button
-        android:id="@+id/saveButton"
+        android:id="@+id/confirmButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Save Widget"/>
+        android:text="Confirm" />
 
 </LinearLayout>
