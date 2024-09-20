@@ -1,71 +1,48 @@
 package com.example.daysleftwidget
 
-import android.app.AlarmManager
-import android.app.PendingIntent
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
-import android.content.Intent
 import android.widget.RemoteViews
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.util.*
 import kotlin.math.abs
 
 class DaysLeftWidget : AppWidgetProvider() {
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+        val dates = loadDates(context)
         for (appWidgetId in appWidgetIds) {
-            updateAppWidget(context, appWidgetManager, appWidgetId)
+            updateAppWidget(context, appWidgetManager, appWidgetId, dates)
         }
     }
 
-    override fun onEnabled(context: Context) {
-        super.onEnabled(context)
-        scheduleUpdate(context)
-    }
-
-    override fun onDisabled(context: Context) {
-        super.onDisabled(context)
-        cancelUpdate(context)
-    }
-
     companion object {
-        fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int) {
+        fun updateAppWidget(context: Context, appWidgetManager: AppWidgetManager, appWidgetId: Int, dates: List<DateItem>) {
             val views = RemoteViews(context.packageName, R.layout.widget_days_left)
-            val prefs = context.getSharedPreferences("WidgetPrefs", Context.MODE_PRIVATE)
-            val targetDate = prefs.getLong("TargetDate_$appWidgetId", 0)
-            val customText = prefs.getString("CustomText_$appWidgetId", "")
-
-            if (targetDate != 0L) {
-                val daysLeft = getDaysLeft(targetDate)
+            
+            if (dates.isNotEmpty()) {
+                val dateItem = dates[appWidgetId % dates.size]
+                val daysLeft = getDaysLeft(dateItem.date)
                 views.setTextViewText(R.id.daysLeftText, "$daysLeft days left")
-                views.setTextViewText(R.id.customText, customText)
+                views.setTextViewText(R.id.labelText, dateItem.label)
             } else {
-                views.setTextViewText(R.id.daysLeftText, "Set a date")
-                views.setTextViewText(R.id.customText, "")
+                views.setTextViewText(R.id.daysLeftText, "No dates set")
+                views.setTextViewText(R.id.labelText, "")
             }
 
             appWidgetManager.updateAppWidget(appWidgetId, views)
         }
 
         private fun getDaysLeft(targetDate: Long): Int {
-            return abs(((targetDate - System.currentTimeMillis()) / (1000 * 60 * 60 * 24)).toInt())
+            val today = Calendar.getInstance().timeInMillis
+            return abs(((targetDate - today) / (1000 * 60 * 60 * 24)).toInt())
         }
 
-        private fun scheduleUpdate(context: Context) {
-            val intent = Intent(context, DaysLeftWidget::class.java)
-            intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-            val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-
-            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            alarmManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis(), AlarmManager.INTERVAL_DAY, pendingIntent)
-        }
-
-        private fun cancelUpdate(context: Context) {
-            val intent = Intent(context, DaysLeftWidget::class.java)
-            intent.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
-            val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
-
-            val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-            alarmManager.cancel(pendingIntent)
+        private fun loadDates(context: Context): List<DateItem> {
+            val prefs = context.getSharedPreferences("DatePrefs", Context.MODE_PRIVATE)
+            val json = prefs.getString("dates", "[]")
+            return Gson().fromJson(json, object : TypeToken<List<DateItem>>() {}.type)
         }
     }
 }
