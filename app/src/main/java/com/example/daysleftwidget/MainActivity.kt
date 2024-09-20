@@ -8,8 +8,10 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import java.text.SimpleDateFormat
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
@@ -50,7 +52,7 @@ class MainActivity : AppCompatActivity() {
     private fun showLabelDialog(dateInMillis: Long) {
         val input = EditText(this)
         input.hint = "Enter label"
-        androidx.appcompat.app.AlertDialog.Builder(this)
+        AlertDialog.Builder(this)
             .setTitle("Enter Label")
             .setView(input)
             .setPositiveButton("OK") { _, _ ->
